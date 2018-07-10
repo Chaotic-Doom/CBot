@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
+}
+
+version '1.0-SNAPSHOT'
+mainClassName = 'me.xa5.cbot.CBot'
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'net.dv8tion:JDA:3.6.0_377'
+    compile 'redis.clients:jedis:2.9.0'
+}
+compileJava.options.encoding = 'UTF-8'
