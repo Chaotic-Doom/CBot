@@ -20,7 +20,8 @@ public class GuildData {
 
     GuildData(Guild guild) {
         this.guild = guild;
-        Redis.getInstance().loadGuild(guild);
+        loadCommands();
+        CBot.getInstance().getLogger().info("Finished setting up guild {} ({})", guild.getName(), guild.getId());
     }
 
     public String getPrefix() {
