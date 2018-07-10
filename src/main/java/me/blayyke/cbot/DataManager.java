@@ -14,7 +14,7 @@ public class DataManager {
 
     public GuildData getGuildData(Guild guild) {
         if (!guildStorageMap.containsKey(guild.getIdLong()))
-            guildStorageMap.putIfAbsent(guild.getIdLong(), new GuildData(guild));
+            guildStorageMap.put(guild.getIdLong(), new GuildData(guild));
         return guildStorageMap.get(guild.getIdLong());
     }
 
