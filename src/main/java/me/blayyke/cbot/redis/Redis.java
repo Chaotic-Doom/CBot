@@ -26,11 +26,6 @@ public class Redis {
         System.out.println("Redis connection established!");
     }
 
-    public void loadGuild(Guild guild) {
-        DataManager.getInstance().getGuildData(guild).loadCommands();
-        CBot.getInstance().getLogger().info("Finished setting up guild {} ({})", guild.getName(), guild.getId());
-    }
-
     public String get(AbstractKey key) {
         return jedis.get(key.getFormattedKey());
     }
