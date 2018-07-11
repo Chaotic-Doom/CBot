@@ -20,7 +20,7 @@ public class CBot extends ListenerAdapter {
 
     private CBot() throws LoginException {
         new JDABuilder(AccountType.BOT)
-                .setToken("NDY1NjM5NjkxNTEzNzU3NzA2.DiYBaQ.67_dDnMsWlAZn1Ig613VRfYr7VI")
+                .setToken("token here")
                 .addEventListener(this, ScriptInternalListener.getInstance())
                 .buildAsync();
         Redis.getInstance().connect();
