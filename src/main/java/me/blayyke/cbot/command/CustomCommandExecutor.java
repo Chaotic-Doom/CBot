@@ -1,26 +1,24 @@
 package me.blayyke.cbot.command;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
-import me.blayyke.cbot.CBHttp;
 import me.blayyke.cbot.CBot;
 import me.blayyke.cbot.MiscUtils;
 import me.blayyke.cbot.redis.Redis;
 import me.blayyke.cbot.redis.keys.hash.ccmd.CCFieldAction;
 import me.blayyke.cbot.redis.keys.hash.ccmd.CCFieldCreator;
 import me.blayyke.cbot.redis.keys.hash.ccmd.CCFieldDescription;
+import me.blayyke.cbot.script.Data;
+import me.blayyke.cbot.script.Embeds;
 import me.blayyke.cbot.script.entity.ScriptChannel;
 import me.blayyke.cbot.script.entity.ScriptGuild;
 import me.blayyke.cbot.script.entity.ScriptMember;
 import me.blayyke.cbot.script.entity.ScriptMessage;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.MiscUtil;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import java.time.Instant;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CustomCommandExecutor extends AbstractCommand {
     private final Guild guild;
@@ -50,6 +48,8 @@ public class CustomCommandExecutor extends AbstractCommand {
         engine.put("time", Instant.now());
         engine.put("args", args);
         engine.put("input", MiscUtils.joinStringArray(args, " "));
+        engine.put("data", new Data(event.getGuild()));
+        engine.put("embeds", new Embeds(event.getGuild()));
         try {
             engine.eval("(function() {" + MiscUtils.getCode(action, code) + "})();");
             System.out.println("Executed code   : " + MiscUtils.getCode(action, code));
