@@ -2,6 +2,8 @@ package me.blayyke.cbot;
 
 import me.blayyke.cbot.command.CommandHandler;
 import me.blayyke.cbot.redis.Redis;
+import me.blayyke.cbot.script.ScriptCustomListener;
+import me.blayyke.cbot.script.ScriptInternalListener;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -19,7 +21,7 @@ public class CBot extends ListenerAdapter {
     private CBot() throws LoginException {
         new JDABuilder(AccountType.BOT)
                 .setToken("NDY1NjM5NjkxNTEzNzU3NzA2.DiYBaQ.67_dDnMsWlAZn1Ig613VRfYr7VI")
-                .addEventListener(this)
+                .addEventListener(this, ScriptInternalListener.getInstance())
                 .buildAsync();
         Redis.getInstance().connect();
     }
