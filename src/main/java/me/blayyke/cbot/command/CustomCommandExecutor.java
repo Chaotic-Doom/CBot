@@ -14,6 +14,7 @@ import me.blayyke.cbot.script.entity.ScriptMember;
 import me.blayyke.cbot.script.entity.ScriptMessage;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.MiscUtil;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -28,12 +29,6 @@ public class CustomCommandExecutor extends AbstractCommand {
     private String code;
     private String description;
     private long creatorId;
-    private final Pattern urlPattern = Pattern.compile("(https?://(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]\\.[^\\s]{2,})");
-
-    //Optional Http(s):// -> optional prefix (www. ect) -> Website name (google ect) -> .domain (com, org ect)/letters
-    private final Pattern pastebinPattern = Pattern.compile("^(https?://)?(www.)?pastebin.com/([a-zA-Z0-9]+)$");
-    private final Pattern pastebinRawPattern = Pattern.compile("(https?://)?(www.)?pastebin.com/raw/([a-zA-Z0-9]+)$");
-    private final Pattern gistPattern = Pattern.compile("^(https?://)?gist.githubusercontent.com/([A-Za-z0-9]+)/[a-zA-Z0-9]+/raw/[A-Za-z0-9]+/[a-zA-Z]+$");
 
     public CustomCommandExecutor(Guild guild, String name) {
         this.guild = guild;
@@ -56,20 +51,13 @@ public class CustomCommandExecutor extends AbstractCommand {
         engine.put("args", args);
         engine.put("input", MiscUtils.joinStringArray(args, " "));
         try {
-            engine.eval("(function() {" + getCode() + "})();");
-            System.out.println("Executed code   : " + getCode());
+            engine.eval("(function() {" + MiscUtils.getCode(action, code) + "})();");
+            System.out.println("Executed code   : " + MiscUtils.getCode(action, code));
         } catch (ScriptException e) {
             event.getChannel().sendMessage("Failed to execute script: " + e.getMessage()).queue();
             CBot.getInstance().getLogger().warn("Failed to execute custom command " + name + " in guild " + guild.getName() + ":");
             e.printStackTrace();
         }
-    }
-
-    private String getCode() {
-        if (actionIsUrl()) {
-            if (code == null) cacheActionFromURL();
-            return code;
-        } else return action;
     }
 
     public Guild getGuild() {
@@ -105,18 +93,7 @@ public class CustomCommandExecutor extends AbstractCommand {
             Redis.getInstance().hashSet(new CCFieldDescription(guild, name), description);
     }
 
-    boolean actionIsUrl() {
-        return urlPattern.matcher(action).matches();
-    }
-
-    void cacheActionFromURL() {
-        if (actionIsUrl()) {
-            Matcher matcher = pastebinPattern.matcher(action);
-            if (pastebinRawPattern.matcher(action).matches()) code = CBHttp.getInstance().get(action);
-            else if (gistPattern.matcher(action).matches()) code = CBHttp.getInstance().get(action);
-            else if (matcher.matches()) {
-                code = CBHttp.getInstance().get("https://pastebin.com/raw/" + matcher.group(3));
-            } else throw new IllegalArgumentException("Action URL is not of supported type!");
-        }
+    public void setCode(String actionFromUrl) {
+        this.code = actionFromUrl;
     }
 }

@@ -44,7 +44,7 @@ public class CommandCustom extends AbstractCommand {
             case "a":
             case "action":
                 if (!update) {
-                    if (command.actionIsUrl())
+                    if (MiscUtils.actionIsUrl(command.getAction()))
                         event.getChannel().sendMessage("The action URL is set to `" + command.getAction() + "`.").queue();
                     else
                         event.getChannel().sendMessage("```js\n" + (command.getAction().length() > 1992 ? command.getAction().substring(0, 1992) : command.getAction()) + "```").queue();
@@ -68,11 +68,11 @@ public class CommandCustom extends AbstractCommand {
             case "commands":
                 throw new NotImplementedException();
             case "update":
-                if (!command.actionIsUrl()) {
+                if (!MiscUtils.actionIsUrl(command.getAction())) {
                     event.getChannel().sendMessage("This action is only needed for actions set to a URL.").queue();
                     return;
                 }
-                command.cacheActionFromURL();
+                command.setCode(MiscUtils.getActionFromUrl(command.getAction()));
                 event.getChannel().sendMessage("Updated code for command from " + command.getAction()).queue();
                 break;
             default:
